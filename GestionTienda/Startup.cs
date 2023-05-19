@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Text;
 using System.Text.Json.Serialization;
+using AutoMapper;
 using GestionTienda;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -65,6 +67,10 @@ namespace GestionTienda
                     }
                 });
             });
+            services.AddAutoMapper(typeof(Startup));
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<AplicationDbContext>()
+                .AddDefaultTokenProviders();
             services.AddAuthorization(opciones => { opciones.AddPolicy("EsAdmin", politica => politica.RequireClaim("esAdmin"));});
         
 
