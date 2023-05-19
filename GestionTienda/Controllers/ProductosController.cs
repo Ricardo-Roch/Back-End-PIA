@@ -1,5 +1,7 @@
 ﻿using System;
 using GestionTienda.Entidades;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,22 +9,23 @@ namespace GestionTienda.Controllers
 {
     [ApiController]
     [Route("/Productos")]
-	public class ProductosController : ControllerBase
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
+    public class ProductosController : ControllerBase
     {
-		private readonly AplicationDbContext dbContext;
-		public  ProductosController(AplicationDbContext context)
+        private readonly AplicationDbContext dbContext;
+        public ProductosController(AplicationDbContext context)
         {
             this.dbContext = context;
-          // this.configuration = configuration;
+            // this.configuration = configuration;
         }
 
         [HttpGet]
         public async Task<ActionResult<List<Productos>>> Get()
         {
-            return await dbContext.Productos.Include(x=> x.carritos).ToListAsync();
+            return await dbContext.Productos.Include(x => x.carritos).ToListAsync();
         }
-		
-		[HttpPost]
+
+        [HttpPost]
 		public async Task<ActionResult> Post(Productos productos)
 		{
 		    dbContext.Add(productos);

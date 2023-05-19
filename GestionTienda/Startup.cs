@@ -65,7 +65,7 @@ namespace GestionTienda
                     }
                 });
             });
-        
+            services.AddAuthorization(opciones => { opciones.AddPolicy("EsAdmin", politica => politica.RequireClaim("esAdmin"));});
         
 
         }

@@ -72,11 +72,11 @@ namespace GestionTienda.Controllers
 
             return Ok();
         }
-
+        
         [HttpPost("Registro")]
-        public async Task<ActionResult<RespAunt>> Registrar(CredenUs credenUs)
+        public async Task<ActionResult<RespAunt>> Registro(CredenUs credenUs)
         {
-            var user = new IdentityUser { UserName = credenUs.Email, Email = credenUs.Email };
+            var user = new IdentityUser { UserName = credenUs.Email , Email = credenUs.Email };
             var result = await userManager.CreateAsync(user, credenUs.Password);
 
             if (result.Succeeded)
@@ -90,6 +90,31 @@ namespace GestionTienda.Controllers
             }
         }
 
+        [HttpPost("login")]
+        public async Task<ActionResult<RespAunt>> Login(CredenUs credencialesUsuario)
+        {
+            var result = await signInManager.PasswordSignInAsync(credencialesUsuario.Email,
+                credencialesUsuario.Password, isPersistent: false, lockoutOnFailure: false);
+
+            if (result.Succeeded)
+            {
+                return await ConstruirToken(credencialesUsuario);
+            }
+            else
+            {
+                return BadRequest("Login Incorrecto");
+            }
+
+        }
+        [HttpPost("HacerAdmin")]
+        public async Task<ActionResult> HacerAdmin(EditarAdminDTO editarAdminDTO)
+        {
+            var usuario = await userManager.FindByEmailAsync(editarAdminDTO.Email);
+
+            await userManager.AddClaimAsync(usuario, new Claim("EsAdmin", "1"));
+
+            return NoContent();
+        }
 
 
         private async Task<RespAunt> ConstruirToken(CredenUs credenUs)
@@ -100,8 +125,9 @@ namespace GestionTienda.Controllers
 
             var claims = new List<Claim>
             {
-                new Claim("email", credenUs.Email),
-                new Claim("claimprueba", "Este es un claim de prueba")
+                new Claim("Email", credenUs.Email),
+                new Claim("Nombre", "Este es un claim de prueba"),
+                new Claim("Carrito", "")
             };
 
             var usuario = await userManager.FindByEmailAsync(credenUs.Email);

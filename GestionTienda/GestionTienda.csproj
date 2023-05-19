@@ -15,14 +15,17 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Entidades\" />
     <None Remove="DTOs\" />
+    <None Remove="Validaciones\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Entidades\" />
     <Folder Include="DTOs\" />
+    <Folder Include="Validaciones\" />
   </ItemGroup>
 </Project>
