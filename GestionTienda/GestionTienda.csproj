@@ -17,16 +17,19 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Entidades\" />
     <None Remove="DTOs\" />
     <None Remove="Validaciones\" />
+    <None Remove="Mapping\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Entidades\" />
     <Folder Include="DTOs\" />
     <Folder Include="Validaciones\" />
+    <Folder Include="Mapping\" />
   </ItemGroup>
 </Project>
