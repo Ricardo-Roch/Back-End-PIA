@@ -2,12 +2,15 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using AutoMapper;
 using GestionTienda.DTOs;
 using GestionTienda.Entidades;
+using GestionTienda.Mapping;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+
 
 namespace GestionTienda.Controllers
 {
@@ -29,20 +32,46 @@ namespace GestionTienda.Controllers
             this.userManager = userManager;
             this.signInManager = signInManager;
         }
+        //metodo get, mapeo manual jalando al 100
+        /*
+        [HttpGet("Con dtos MANUALES")]
+        public async Task<List<UsuarioDTO>> Get()
+        {
+            var usuarios = await dbContext.Usuario.ToListAsync();
+            var usuariodto = new List<UsuarioDTO>();
+            foreach(var usuario in usuarios)
+            {
+                usuariodto.Add(new UsuarioDTO { id_usuario = usuario.id_usuario, nombre = usuario.nombre, carritos = usuario.carritos, contra = usuario.contra, correo = usuario.correo });
+            }
 
-        [HttpGet]
+            return usuariodto;
+        }   */
+        
+		  [HttpGet("Sin DTOs'MANUALES'")]
         public async Task<ActionResult<List<Usuario>>> Get()
         {
             return await dbContext.Usuario.Include(x=> x.carritos).ToListAsync();
         }
-		
-		[HttpPost]
+
+
+        /*
+        [HttpPost]
 		public async Task<ActionResult> Post(Usuario usuario)
 		{
 		    dbContext.Add(usuario);
 		    await dbContext.SaveChangesAsync();
 		    return Ok();
-		}
+		}*/
+
+        [HttpPost]
+        public async Task<ActionResult> Post(GetUsuarioDTO getUsuarioDTO)
+        {
+            Automapper.Configure();
+            var us = Mapper.Map<Usuario>(getUsuarioDTO);
+            await dbContext.Usuario.AddAsync(us);
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
 
         [HttpPut("{id:int}")]
         public async Task<ActionResult> put(Usuario usuario, int id)

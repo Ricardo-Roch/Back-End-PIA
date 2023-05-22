@@ -1,19 +1,24 @@
 ﻿using System;
+using GestionTienda.DTOs;
+using GestionTienda.Services;
 using GestionTienda.Entidades;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Mail;
 
 namespace GestionTienda.Controllers
 {
     [ApiController]
     [Route("/Compra")]
-	public class CompraController : ControllerBase
+    public class CompraController : ControllerBase
     {
         private readonly AplicationDbContext dbContext;
-		public CompraController(AplicationDbContext context)
+        private readonly EmailService _emailService;
+        public CompraController(AplicationDbContext context, EmailService emailService)
         {
            this.dbContext = context;
-        // this.configuration = configuration;
+            _emailService = emailService;
+            // this.configuration = configuration;
         }
 
         [HttpGet]
@@ -42,6 +47,7 @@ namespace GestionTienda.Controllers
             return Ok();
         }
 
+
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
@@ -57,6 +63,29 @@ namespace GestionTienda.Controllers
             await dbContext.SaveChangesAsync();
 
             return Ok();
+        }
+
+
+       [HttpPut("api/Compra/{orderId}")]
+        public ActionResult UpdateOrderStatus(int orderId, string newStatus)
+        {
+            // Lógica para actualizar el estado del pedido en la base de datos
+
+            // Obtener la dirección de correo electrónico del usuario asociado al pedido
+            string emailAddress = GetCustomerEmailAddress(orderId);
+
+            // Enviar notificación por correo electrónico al usuario
+            _emailService.SendOrderStatusNotification(emailAddress, orderId.ToString(), newStatus);
+
+            return Ok();
+        }
+
+        private string GetCustomerEmailAddress(int orderId)
+        {
+            // Lógica para obtener la dirección de correo electrónico del usuario asociado al pedido
+            // Aquí puedes consultar la base de datos o cualquier otro medio para obtener la dirección de correo electrónico
+
+            return "monterrey-luis@hotmail.com";
         }
     }
 }
