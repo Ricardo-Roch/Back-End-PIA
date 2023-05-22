@@ -18,12 +18,12 @@ namespace GestionTienda.Services
             SmtpClient client = new SmtpClient("smtp-mail.outlook.com", 587); // Reemplaza con la información de tu servidor SMTP
             client.UseDefaultCredentials = false;
             client.EnableSsl = true;
-            client.Credentials = new NetworkCredential("monterrey-luis@hotmail.com", "rayado");
+            client.Credentials = new NetworkCredential("tucorreo@hotmail.com", "tucontraseña");
 
 
             MailMessage message = new MailMessage();
-            message.From = new MailAddress("monterrey-luis@hotmail.com");
-            message.To.Add(new MailAddress("ricardo.rocham@uanl.edu.mx"));
+            message.From = new MailAddress("tucorreo@hotmail.com");
+            message.To.Add(new MailAddress("correodelusuario@uanl.edu.mx"));
             message.Subject = "Actualización de estado del pedido";
             message.Body = $"El estado de su pedido {orderNumber} ha cambiado a {newStatus}.";
 
@@ -58,7 +58,7 @@ namespace GestionTienda.Services
             // Lógica para obtener la dirección de correo electrónico del usuario asociado al pedido
             // Aquí puedes consultar la base de datos o cualquier otro medio para obtener la dirección de correo electrónico
 
-            return "ricardo.rocham@uanl.edu.mx";
+            return "correodelusuario@uanl.edu.mx";
         }
 
     }
