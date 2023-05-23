@@ -1,5 +1,8 @@
 ﻿using System;
+using AutoMapper;
+using GestionTienda.DTOs;
 using GestionTienda.Entidades;
+using GestionTienda.Mapping;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +12,7 @@ namespace GestionTienda.Controllers
 {
     [ApiController]
     [Route("/Productos")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
     public class ProductosController : ControllerBase
     {
         private readonly AplicationDbContext dbContext;
@@ -19,20 +22,56 @@ namespace GestionTienda.Controllers
             // this.configuration = configuration;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<Productos>>> Get()
+        [HttpGet("Productos")]
+        public async Task<List<productoDTO>> Get()
         {
-            return await dbContext.Productos.Include(x => x.carritos).ToListAsync();
+            Automapper.Configure();
+            var producto = await dbContext.Productos.ToListAsync();
+            return Mapper.Map<List<productoDTO>>(producto);
         }
 
-        [HttpPost]
-		public async Task<ActionResult> Post(Productos productos)
-		{
-		    dbContext.Add(productos);
-		    await dbContext.SaveChangesAsync();
-		    return Ok();
-		}
+        
 
+
+        [HttpGet("productos/{categoria}")]
+        public IActionResult GetProductosPorCategoria(string categoria)
+        {
+            List<Productos> productos = dbContext.Productos.Where(p => p.categoria == categoria).ToList();
+            if (productos.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(productos);
+        }
+
+        [HttpGet("productos/nombre/{nombre}")]
+        public IActionResult GetProductoPorNombre(string nombre)
+        {
+            // Aquí se debe realizar la lógica para buscar el producto por su nombre
+            // Puedes utilizar una base de datos o cualquier otra fuente de datos
+
+            // Ejemplo de búsqueda de producto por nombre
+            Productos producto = dbContext.Productos.FirstOrDefault(p => p.Nombre_producto == nombre);
+
+            if (producto == null)
+            {
+                return NotFound(); // Devuelve un error 404 si el producto no se encontró
+            }
+
+            return Ok(producto); // Devuelve el producto encontrado
+        }
+
+        [HttpPost("Prroductos")]
+		public async Task<ActionResult> Post(productoDTO productos)
+		{
+            Automapper.Configure();
+            var productos1 = Mapper.Map<Productos>(productos);
+            await dbContext.Productos.AddAsync(productos1);
+            await dbContext.SaveChangesAsync();
+            return Ok();
+
+		}
+ 
         [HttpPut("{id:int}")]
         public async Task<ActionResult> put(Productos productos, int id)
         {

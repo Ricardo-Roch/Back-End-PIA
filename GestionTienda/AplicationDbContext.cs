@@ -4,8 +4,7 @@ using System.ComponentModel;
 using Microsoft.EntityFrameworkCore;
 using GestionTienda.Entidades;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-
-
+using GestionTienda.DTOs;
 
 namespace GestionTienda
 {
@@ -14,16 +13,16 @@ namespace GestionTienda
         public AplicationDbContext(DbContextOptions options) : base(options)
         {
         }
-        /*
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Usuario>()
-                .HasKey(al => new { al.id_usuario, al.carritos });
+            modelBuilder.Entity<CompraCarrito>()
+                .HasKey(al => new { al.id_compra, al.Id_carrito });
 
          
-        }*/
+        }
         //LO DE LA BD
         public DbSet<Carrito> Carrito { get; set; }
         public DbSet<Compra> Compra { get; set; }

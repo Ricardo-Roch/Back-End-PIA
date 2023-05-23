@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Net.Mail;
 using System.Text;
 using System.Text.Json.Serialization;
 using AutoMapper;
 using GestionTienda;
+using GestionTienda.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -67,13 +69,17 @@ namespace GestionTienda
                     }
                 });
             });
-            services.AddAutoMapper(typeof(Startup));
+            //services.AddAutoMapper(typeof(Startup));
+           // services.AddAutoMapper(typeof(Startup));//aver si jala
+            services.AddSingleton<IMapper>(mapper => new Mapper(mapper.GetRequiredService<AutoMapper.IConfigurationProvider>(), mapper.GetService));
+
             services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<AplicationDbContext>()
                 .AddDefaultTokenProviders();
             services.AddAuthorization(opciones => { opciones.AddPolicy("EsAdmin", politica => politica.RequireClaim("esAdmin"));});
-        
-            
+            services.AddTransient<EmailService>();
+            services.AddTransient<SmtpClient>();
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -85,11 +91,10 @@ namespace GestionTienda
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
             app.UseHttpsRedirection();
-
-            app.UseAuthorization();
+            app.UseAuthentication();
             app.UseRouting();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

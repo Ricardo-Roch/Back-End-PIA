@@ -12,12 +12,21 @@ namespace GestionTienda.Mapping
 		{
             CreateMap<Usuario, UsuarioDTO>().ReverseMap();
             CreateMap<GetUsuarioDTO, Usuario>();
-           
+
+            CreateMap<Compra, compraDTO>().ReverseMap();
+            CreateMap<GetCompraDTO, Compra>();
+
+            CreateMap<Productos, productoDTO>().ReverseMap();
+            CreateMap<GetProducto, Productos>();
+
+            CreateMap<Carrito, carritoDTO>().ReverseMap();
+            CreateMap<GetCarritoDTO, Carrito>();
 
         }
 
         public static void Configure()
         {
+            AutoMapper.Mapper.Reset();
             Mapper.Initialize(x =>
             {
                 x.AddProfile<Automapper>();

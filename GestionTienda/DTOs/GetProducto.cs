@@ -1,11 +1,12 @@
 ﻿using System;
+using GestionTienda.Entidades;
 using System.ComponentModel.DataAnnotations;
 
-namespace GestionTienda.Entidades
+namespace GestionTienda.DTOs
 {
-    public class Productos
-    {
-        [Key]
+	public class GetProducto
+	{
+        
         public int id_producto { get; set; }
         public bool disponibilidad { get; set; }
         public string categoria { get; set; }

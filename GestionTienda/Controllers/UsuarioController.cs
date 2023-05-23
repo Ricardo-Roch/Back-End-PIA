@@ -32,47 +32,28 @@ namespace GestionTienda.Controllers
             this.userManager = userManager;
             this.signInManager = signInManager;
         }
-        //metodo get, mapeo manual jalando al 100
-        /*
-        [HttpGet("Con dtos MANUALES")]
+        //metodo get, jalando al 100 dtos
+        
+        [HttpGet("Con dtos")]
         public async Task<List<UsuarioDTO>> Get()
         {
+            Automapper.Configure();
             var usuarios = await dbContext.Usuario.ToListAsync();
-            var usuariodto = new List<UsuarioDTO>();
-            foreach(var usuario in usuarios)
-            {
-                usuariodto.Add(new UsuarioDTO { id_usuario = usuario.id_usuario, nombre = usuario.nombre, carritos = usuario.carritos, contra = usuario.contra, correo = usuario.correo });
-            }
-
-            return usuariodto;
-        }   */
-        
-		  [HttpGet("Sin DTOs'MANUALES'")]
-        public async Task<ActionResult<List<Usuario>>> Get()
-        {
-            return await dbContext.Usuario.Include(x=> x.carritos).ToListAsync();
+            return Mapper.Map<List<UsuarioDTO>>(usuarios);
         }
 
-
-        /*
-        [HttpPost]
-		public async Task<ActionResult> Post(Usuario usuario)
-		{
-		    dbContext.Add(usuario);
-		    await dbContext.SaveChangesAsync();
-		    return Ok();
-		}*/
+       
 
         [HttpPost]
-        public async Task<ActionResult> Post(GetUsuarioDTO getUsuarioDTO)
+        public async Task<ActionResult> Post(UsuarioDTO usuarioDTO)
         {
             Automapper.Configure();
-            var us = Mapper.Map<Usuario>(getUsuarioDTO);
+            var us = Mapper.Map<Usuario>(usuarioDTO);
             await dbContext.Usuario.AddAsync(us);
             await dbContext.SaveChangesAsync();
             return Ok();
         }
-
+   
         [HttpPut("{id:int}")]
         public async Task<ActionResult> put(Usuario usuario, int id)
         {
