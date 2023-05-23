@@ -60,7 +60,7 @@ namespace GestionTienda.Controllers
 
             return Ok(producto); // Devuelve el producto encontrado
         }
-
+        /*
         [HttpPost("Prroductos")]
 		public async Task<ActionResult> Post(productoDTO productos)
 		{
@@ -70,8 +70,58 @@ namespace GestionTienda.Controllers
             await dbContext.SaveChangesAsync();
             return Ok();
 
-		}
- 
+		}*/
+        [HttpPost]
+        public async Task<IActionResult> CrearProducto([FromForm]GetProducto productoDTO)
+        {
+            //Automapper.Configure();
+           // var productos1 = Mapper.Map<Productos>(productoDTO);
+            string fotoUrl = string.Empty; // Valor predeterminado para fotoUrl
+
+            if (productoDTO.Imagen != null)
+            {
+                // Procesar y guardar la imagen
+                fotoUrl = await GuardarFoto(productoDTO.Imagen);
+            }
+
+            // Asignar la URL de la imagen a la propiedad Foto
+            var producto = new Productos
+            {
+                id_producto = productoDTO.id_producto,
+                disponibilidad = productoDTO.disponibilidad,
+                categoria = productoDTO.categoria,
+                Nombre_producto = productoDTO.Nombre_producto,
+                Imagen = fotoUrl,
+                carritos = productoDTO.carritos
+            };
+
+            // Guardar la entidad en la base de datos
+            dbContext.Productos.Add(producto);
+            await dbContext.SaveChangesAsync();
+            //await dbContext.Productos.AddAsync(productos1);
+            return Ok();
+        }
+
+        private async Task<string> GuardarFoto(IFormFile foto)
+        {
+            //using var stream = new MemoryStream();
+            string nombreArchivo = Guid.NewGuid().ToString() + Path.GetExtension(foto.FileName);
+           // await foto.CopyToAsync(stream);
+
+            //var fileBytes = stream.ToArray();
+            string rutaArchivo = Path.Combine("C://Users//monte//OneDrive//Documentos//Back-end//Back-End-PIA//GestionTienda//Imagenes//", nombreArchivo);
+            // Aquí debes implementar la lógica para guardar el archivo en tu sistema de almacenamiento (por ejemplo, sistema de archivos, almacenamiento en la nube, etc.)
+            // Retorna la URL de la imagen guardada
+
+            using (var stream = new FileStream(rutaArchivo, FileMode.Create))
+            {
+                await foto.CopyToAsync(stream);
+            }
+            string urlImagen = "https://localhost:7236/swagger/index.html" + nombreArchivo;
+            return urlImagen;
+        }
+
+
         [HttpPut("{id:int}")]
         public async Task<ActionResult> put(Productos productos, int id)
         {
