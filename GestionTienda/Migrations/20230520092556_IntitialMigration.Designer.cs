@@ -4,6 +4,7 @@ using GestionTienda;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestionTienda.Migrations
 {
     [DbContext(typeof(AplicationDbContext))]
-    partial class AplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230520092556_IntitialMigration")]
+    partial class IntitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -105,29 +108,6 @@ namespace GestionTienda.Migrations
                     b.ToTable("Compra");
                 });
 
-            modelBuilder.Entity("GestionTienda.Entidades.CompraCarrito", b =>
-                {
-                    b.Property<int>("id_compra")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Id_carrito")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CarritoId_carrito")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("compraid_compra")
-                        .HasColumnType("int");
-
-                    b.HasKey("id_compra", "Id_carrito");
-
-                    b.HasIndex("CarritoId_carrito");
-
-                    b.HasIndex("compraid_compra");
-
-                    b.ToTable("CompraCarrito");
-                });
-
             modelBuilder.Entity("GestionTienda.Entidades.Productos", b =>
                 {
                     b.Property<int>("id_producto")
@@ -158,9 +138,6 @@ namespace GestionTienda.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id_usuario"));
 
-                    b.Property<int?>("Compraid_compra")
-                        .HasColumnType("int");
-
                     b.Property<string>("contra")
                         .HasColumnType("nvarchar(max)");
 
@@ -171,8 +148,6 @@ namespace GestionTienda.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id_usuario");
-
-                    b.HasIndex("Compraid_compra");
 
                     b.ToTable("Usuario");
                 });
@@ -420,28 +395,6 @@ namespace GestionTienda.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("GestionTienda.Entidades.CompraCarrito", b =>
-                {
-                    b.HasOne("GestionTienda.Entidades.Carrito", "Carrito")
-                        .WithMany()
-                        .HasForeignKey("CarritoId_carrito");
-
-                    b.HasOne("GestionTienda.Entidades.Compra", "compra")
-                        .WithMany()
-                        .HasForeignKey("compraid_compra");
-
-                    b.Navigation("Carrito");
-
-                    b.Navigation("compra");
-                });
-
-            modelBuilder.Entity("GestionTienda.Entidades.Usuario", b =>
-                {
-                    b.HasOne("GestionTienda.Entidades.Compra", null)
-                        .WithMany("Usuarios")
-                        .HasForeignKey("Compraid_compra");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -491,11 +444,6 @@ namespace GestionTienda.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("GestionTienda.Entidades.Compra", b =>
-                {
-                    b.Navigation("Usuarios");
                 });
 #pragma warning restore 612, 618
         }
