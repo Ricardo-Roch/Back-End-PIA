@@ -92,7 +92,7 @@ namespace GestionTienda.Controllers
                 categoria = productoDTO.categoria,
                 Nombre_producto = productoDTO.Nombre_producto,
                 Imagen = fotoUrl,
-                carritos = productoDTO.carritos
+               // carritos = productoDTO.carritos
             };
 
             // Guardar la entidad en la base de datos

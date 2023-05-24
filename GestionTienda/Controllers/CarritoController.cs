@@ -31,7 +31,7 @@ namespace GestionTienda.Controllers
 
 
 
-        [HttpPost("cARRITO")]
+        [HttpPost("Carrito")]
         public async Task<ActionResult> Post(carritoDTO CarritoDTO)
         {
             Automapper.Configure();
@@ -40,9 +40,9 @@ namespace GestionTienda.Controllers
             await dbContext.SaveChangesAsync();
             return Ok();
         }
+     
 
-
-            [HttpPut("{id:int}")]
+        [HttpPut("{id:int}")]
         public async Task<ActionResult> put(Carrito carrito, int id)
         {
             if (carrito.Id_carrito != id)

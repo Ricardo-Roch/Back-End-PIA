@@ -10,7 +10,8 @@ namespace GestionTienda.Mapping
     {
 		public Automapper()
 		{
-            CreateMap<Usuario, UsuarioDTO>().ReverseMap();
+            CreateMap<Usuario, UsuarioDTO>();
+                //.ForMember(dest => dest.id_usuario, opt => opt.MapFrom(src => src.id_usuario));
             CreateMap<GetUsuarioDTO, Usuario>();
 
             CreateMap<Compra, compraDTO>().ReverseMap();
@@ -39,24 +40,3 @@ namespace GestionTienda.Mapping
 
 }
 
-/*namespace WebApiAlumnosSeg.Utilidades
-{
-    public class AutoMapperProfiles: Profile
-    {
-        public AutoMapperProfiles()
-        {
-            CreateMap<AlumnoDTO, Alumno>();
-            CreateMap<Alumno,GetAlumnoDTO>();
-            CreateMap<Alumno, AlumnoDTOConClases>()
-                .ForMember(alumnoDTO => alumnoDTO.Clases, opciones => opciones.MapFrom(MapAlumnoDTOClases));
-            CreateMap<ClaseCreacionDTO, Clase>()
-                .ForMember(clase => clase.AlumnoClase, opciones => opciones.MapFrom(MapAlumnoClase));
-            CreateMap<Clase, ClaseDTO>();
-            CreateMap<Clase, ClaseDTOConAlumnos>()
-                .ForMember(claseDTO => claseDTO.Alumnos, opciones => opciones.MapFrom(MapClaseDTOAlumnos));
-            CreateMap<ClasePatchDTO, Clase>().ReverseMap();
-            CreateMap<CursoCreacionDTO, Cursos>();
-            CreateMap<Cursos,CursoDTO>();
-        }
-
- */

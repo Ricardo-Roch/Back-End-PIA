@@ -20,6 +20,7 @@ namespace GestionTienda
 
             modelBuilder.Entity<CompraCarrito>()
                 .HasKey(al => new { al.id_compra, al.Id_carrito });
+            
 
          
         }

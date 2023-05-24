@@ -11,7 +11,9 @@ namespace GestionTienda.Entidades
         public String nombre { get; set; }
         public String correo { get; set; }
         public String contra { get; set; }
-        public List<Carrito> carritos { get; set; }
+        public List<Compra> compras{ get; set; }
+        public List<Carrito> carritos{ get; set; }
+
     }
 }
 

@@ -9,10 +9,10 @@ namespace GestionTienda.Entidades
 	{
         [Key]
         public int Id_carrito { get; set; }
+        public int id_usuario { get; set; }
         public int costo_total { get; set; }
-        public List<Productos> productos { get; set; }
-        public List<Compra> compras { get; set; }
-        public List<Usuario> usuarios { get; set; }
+        public int id_compra { get; set; }
+        public List<Productos> productos{ get; set; }
 
     }
 }
