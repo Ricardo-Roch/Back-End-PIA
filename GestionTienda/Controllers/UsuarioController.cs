@@ -2,12 +2,15 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using AutoMapper;
 using GestionTienda.DTOs;
 using GestionTienda.Entidades;
+using GestionTienda.Mapping;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+
 
 namespace GestionTienda.Controllers
 {
@@ -29,21 +32,45 @@ namespace GestionTienda.Controllers
             this.userManager = userManager;
             this.signInManager = signInManager;
         }
-
-        [HttpGet]
-        public async Task<ActionResult<List<Usuario>>> Get()
+        //metodo get, jalando al 100 dtos
+        [HttpGet("Con dtos")]
+        public async Task<List<UsuarioDTO>> Get()
         {
-            return await dbContext.Usuario.Include(x=> x.carritos).ToListAsync();
-        }
-		
-		[HttpPost]
-		public async Task<ActionResult> Post(Usuario usuario)
-		{
-		    dbContext.Add(usuario);
-		    await dbContext.SaveChangesAsync();
-		    return Ok();
-		}
+            Automapper.Configure();
 
+            var usuarios = await dbContext.Usuario.Include(c => c.compras).ToListAsync();
+            var usuarios2 = await dbContext.Usuario.Include(c => c.carritos).ToListAsync();
+
+            var usuariosDTO = new List<UsuarioDTO>();
+
+            foreach (var usuario in usuarios)
+            {
+                var usuarioDTO = Mapper.Map<UsuarioDTO>(usuario);
+                usuariosDTO.Add(usuarioDTO);
+            }
+
+            foreach (var usuario in usuarios2)
+            {
+                var usuarioDTO = Mapper.Map<UsuarioDTO>(usuario);
+                usuariosDTO.Add(usuarioDTO);
+            }
+
+            return usuariosDTO;
+        }
+
+
+
+
+        [HttpPost]
+        public async Task<ActionResult> Post([FromForm] UsuarioDTO usuarioDTO)
+        {
+            Automapper.Configure();
+            var us = Mapper.Map<Usuario>(usuarioDTO);
+            await dbContext.Usuario.AddAsync(us);
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
+   
         [HttpPut("{id:int}")]
         public async Task<ActionResult> put(Usuario usuario, int id)
         {
@@ -74,7 +101,7 @@ namespace GestionTienda.Controllers
         }
         
         [HttpPost("Registro")]
-        public async Task<ActionResult<RespAunt>> Registro(CredenUs credenUs)
+        public async Task<ActionResult<RespAunt>> Registro([FromForm] CredenUs credenUs)
         {
             var user = new IdentityUser { UserName = credenUs.Email , Email = credenUs.Email };
             var result = await userManager.CreateAsync(user, credenUs.Password);
@@ -91,7 +118,7 @@ namespace GestionTienda.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<RespAunt>> Login(CredenUs credencialesUsuario)
+        public async Task<ActionResult<RespAunt>> Login([FromForm] CredenUs credencialesUsuario)
         {
             var result = await signInManager.PasswordSignInAsync(credencialesUsuario.Email,
                 credencialesUsuario.Password, isPersistent: false, lockoutOnFailure: false);
@@ -107,7 +134,7 @@ namespace GestionTienda.Controllers
 
         }
         [HttpPost("HacerAdmin")]
-        public async Task<ActionResult> HacerAdmin(EditarAdminDTO editarAdminDTO)
+        public async Task<ActionResult> HacerAdmin([FromForm] EditarAdminDTO editarAdminDTO)
         {
             var usuario = await userManager.FindByEmailAsync(editarAdminDTO.Email);
 
@@ -149,6 +176,7 @@ namespace GestionTienda.Controllers
                 Expiracion = expiration
             };
         }
+        
     }
 }
 
