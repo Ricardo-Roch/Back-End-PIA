@@ -1,18 +1,17 @@
 ﻿using System;
+using GestionTienda.Validaciones;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Mvc;
+using GestionTienda.Entidades;
 
-namespace GestionTienda.Entidades
+namespace GestionTienda.DTOs
 {
-	public class Carrito
+	public class GetCarritoDTO
 	{
-        [Key]
+
         public int Id_carrito { get; set; }
         public int id_usuario { get; set; }
         public int costo_total { get; set; }
         public int id_compra { get; set; }
-        [ForeignKey("Id_carrito")] 
         public List<Productos> productos { get; set; }
 
     }
