@@ -34,7 +34,7 @@ namespace GestionTienda.Controllers
 
         
         [HttpPost("Compra")]
-        public async Task<ActionResult> Post(compraDTO comprasDTO)
+        public async Task<ActionResult> Post([FromForm] compraDTO comprasDTO)
         {
             Automapper.Configure();
             var comp = Mapper.Map<Compra>(comprasDTO);

@@ -12,13 +12,13 @@ namespace GestionTienda.Mapping
 		{
             CreateMap<Usuario, UsuarioDTO>().ReverseMap();
             CreateMap<GetUsuarioDTO, Usuario>();
-
+           
             CreateMap<Compra, compraDTO>().ReverseMap();
             CreateMap<GetCompraDTO, Compra>()
                 .ForMember(dest => dest.id_compra, opt => opt.MapFrom(src => src.id_usuario));
             CreateMap<Compra, GetCompraDTO>()
                     .ForMember(dest => dest.id_usuario, opt => opt.MapFrom(src => src.id_compra));
-
+            //CreateMap<Usuario, UsuariosDTO>();
             CreateMap<Productos, productoDTO>().ReverseMap();
             CreateMap<GetProducto, Productos>();
 
@@ -34,7 +34,7 @@ namespace GestionTienda.Mapping
             {
                 x.AddProfile<Automapper>();
             });
-
+            
             Mapper.Configuration.AssertConfigurationIsValid();
         }
     }

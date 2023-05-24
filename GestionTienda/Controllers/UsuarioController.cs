@@ -33,19 +33,36 @@ namespace GestionTienda.Controllers
             this.signInManager = signInManager;
         }
         //metodo get, jalando al 100 dtos
-        
         [HttpGet("Con dtos")]
         public async Task<List<UsuarioDTO>> Get()
         {
             Automapper.Configure();
-            var usuarios = await dbContext.Usuario.ToListAsync();
-            return Mapper.Map<List<UsuarioDTO>>(usuarios);
+
+            var usuarios = await dbContext.Usuario.Include(c => c.compras).ToListAsync();
+            var usuarios2 = await dbContext.Usuario.Include(c => c.carritos).ToListAsync();
+
+            var usuariosDTO = new List<UsuarioDTO>();
+
+            foreach (var usuario in usuarios)
+            {
+                var usuarioDTO = Mapper.Map<UsuarioDTO>(usuario);
+                usuariosDTO.Add(usuarioDTO);
+            }
+
+            foreach (var usuario in usuarios2)
+            {
+                var usuarioDTO = Mapper.Map<UsuarioDTO>(usuario);
+                usuariosDTO.Add(usuarioDTO);
+            }
+
+            return usuariosDTO;
         }
 
-       
+
+
 
         [HttpPost]
-        public async Task<ActionResult> Post(UsuarioDTO usuarioDTO)
+        public async Task<ActionResult> Post([FromForm] UsuarioDTO usuarioDTO)
         {
             Automapper.Configure();
             var us = Mapper.Map<Usuario>(usuarioDTO);
@@ -84,7 +101,7 @@ namespace GestionTienda.Controllers
         }
         
         [HttpPost("Registro")]
-        public async Task<ActionResult<RespAunt>> Registro(CredenUs credenUs)
+        public async Task<ActionResult<RespAunt>> Registro([FromForm] CredenUs credenUs)
         {
             var user = new IdentityUser { UserName = credenUs.Email , Email = credenUs.Email };
             var result = await userManager.CreateAsync(user, credenUs.Password);
@@ -101,7 +118,7 @@ namespace GestionTienda.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<RespAunt>> Login(CredenUs credencialesUsuario)
+        public async Task<ActionResult<RespAunt>> Login([FromForm] CredenUs credencialesUsuario)
         {
             var result = await signInManager.PasswordSignInAsync(credencialesUsuario.Email,
                 credencialesUsuario.Password, isPersistent: false, lockoutOnFailure: false);
@@ -117,7 +134,7 @@ namespace GestionTienda.Controllers
 
         }
         [HttpPost("HacerAdmin")]
-        public async Task<ActionResult> HacerAdmin(EditarAdminDTO editarAdminDTO)
+        public async Task<ActionResult> HacerAdmin([FromForm] EditarAdminDTO editarAdminDTO)
         {
             var usuario = await userManager.FindByEmailAsync(editarAdminDTO.Email);
 
@@ -159,6 +176,7 @@ namespace GestionTienda.Controllers
                 Expiracion = expiration
             };
         }
+        
     }
 }
 

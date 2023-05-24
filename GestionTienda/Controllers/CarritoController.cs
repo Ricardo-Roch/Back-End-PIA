@@ -40,7 +40,7 @@ namespace GestionTienda.Controllers
 
 
         [HttpPost("Carrito")]
-        public async Task<ActionResult> Post(carritoDTO CarritoDTO)
+        public async Task<ActionResult> Post([FromForm] carritoDTO CarritoDTO)
         {
             Automapper.Configure();
             var carr = Mapper.Map<Carrito>(CarritoDTO);

@@ -109,7 +109,7 @@ namespace GestionTienda.Controllers
            // await foto.CopyToAsync(stream);
 
             //var fileBytes = stream.ToArray();
-            string rutaArchivo = Path.Combine("/Users/ricardo/Desktop/Facu/Semestre 6/Back-End/PIA/Tienda/GestionTienda/Imagenes", nombreArchivo);
+            string rutaArchivo = Path.Combine("C://Users//monte//OneDrive//Documentos//Back-end//Back-End-PIA//GestionTienda//Imagenes//", nombreArchivo);
             // Aquí debes implementar la lógica para guardar el archivo en tu sistema de almacenamiento (por ejemplo, sistema de archivos, almacenamiento en la nube, etc.)
             // Retorna la URL de la imagen guardada
 
@@ -122,7 +122,7 @@ namespace GestionTienda.Controllers
         }
 
 
-        [HttpPut("{id:int}")]
+        /*[HttpPut("{id:int}")]
         public async Task<ActionResult> put(Productos productos, int id)
         {
             if (productos.id_producto != id)
@@ -133,7 +133,39 @@ namespace GestionTienda.Controllers
             dbContext.Update(productos);
             await dbContext.SaveChangesAsync();
             return Ok();
+        }*/
+        [HttpPut("{id}")]
+        public async Task<IActionResult> ActualizarProducto(int id, [FromForm] GetProducto productoDTO)
+        {
+            var productoExistente = await dbContext.Productos.FindAsync(id);
+
+            if (productoExistente == null)
+            {
+                return NotFound();
+            }
+
+            // Procesar y guardar la imagen si se proporciona una nueva imagen
+            if (productoDTO.Imagen != null)
+            {
+                string fotoUrl = await GuardarFoto(productoDTO.Imagen);
+
+                // Actualizar la propiedad Imagen con la nueva URL de la imagen
+                productoExistente.Imagen = fotoUrl;
+            }
+
+            // Actualizar otras propiedades del producto si es necesario
+            productoExistente.disponibilidad = productoDTO.disponibilidad;
+            productoExistente.Id_carrito = productoDTO.Id_carrito;
+            productoExistente.categoria = productoDTO.categoria;
+            productoExistente.Nombre_producto = productoDTO.Nombre_producto;
+
+            // Guardar los cambios en la base de datos
+            dbContext.Productos.Update(productoExistente);
+            await dbContext.SaveChangesAsync();
+
+            return Ok();
         }
+
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
@@ -150,6 +182,125 @@ namespace GestionTienda.Controllers
 
             return Ok();
         }
+        /*
+        [HttpGet("recomendaciones")]
+        public async Task<ActionResult<Productos>> GetRecomendacionProducto(int idUsuario, string categoria)
+        {
+            // Obtener el carrito del usuario por su ID
+            var carrito = await dbContext.Carrito
+                .Include(c => c.productos)
+                .FirstOrDefaultAsync(c => c.id_usuario == idUsuario);
+
+            if (carrito == null)
+            {
+                return NotFound("No se encontró el carrito del usuario");
+            }
+
+            // Obtener los ID de los productos en el carrito
+            var productosEnCarrito = carrito.productos
+                .Select(p => p.id_producto)
+                .ToList();
+
+            // Obtener un producto de la misma categoría que no esté en el carrito
+            var productoRecomendado = await dbContext.Productos
+                .Where(p => p.categoria == categoria && !productosEnCarrito.Contains(p.id_producto))
+                .FirstOrDefaultAsync();
+
+            if (productoRecomendado == null)
+            {
+                // No se encontraron productos recomendados
+                return NotFound("No se encontraron productos recomendados");
+            }
+
+            return Ok(productoRecomendado);
+        }
+        */
+        /*
+        [HttpGet("recomendaciones")]
+        public async Task<ActionResult<Productos>> GetRecomendacionProducto(int idUsuario)
+        {
+            // Obtener el carrito del usuario por su ID
+            var carrito = await dbContext.Carrito
+                .Include(c => c.productos)
+                .FirstOrDefaultAsync(c => c.id_usuario == idUsuario);
+
+            if (carrito == null)
+            {
+                return NotFound("No se encontró el carrito del usuario");
+            }
+
+            // Obtener los ID de los productos en el carrito
+            var productosEnCarrito = carrito.productos
+                .Select(p => p.id_producto)
+                .ToList();
+
+            // Obtener todos los productos que no están en el carrito
+            var productosDisponibles = await dbContext.Productos
+                .Where(p => !productosEnCarrito.Contains(p.id_producto))
+                .ToListAsync();
+
+            // Verificar si existen productos disponibles
+            if (productosDisponibles.Count == 0)
+            {
+                // No se encontraron productos recomendados
+                return NotFound("No se encontraron productos recomendados");
+            }
+
+            // Seleccionar un producto al azar de los disponibles
+            var random = new Random();
+            var productoRecomendado = productosDisponibles[random.Next(productosDisponibles.Count)];
+
+            return Ok(productoRecomendado);
+        }
+        */
+        [HttpGet("recomendaciones")]
+        public async Task<ActionResult<Productos>> GetRecomendacionProducto(int idUsuario)
+        {
+            // Obtener el carrito del usuario por su ID
+            var carrito = await dbContext.Carrito
+                .Include(c => c.productos)
+                .FirstOrDefaultAsync(c => c.id_usuario == idUsuario);
+
+            if (carrito == null)
+            {
+                return NotFound("No se encontró el carrito del usuario");
+            }
+
+            // Obtener los ID de los productos en el carrito
+            var productosEnCarrito = carrito.productos
+                .Select(p => p.id_producto)
+                .ToList();
+
+            // Obtener las categorías de los productos en el carrito
+            var categoriasEnCarrito = carrito.productos
+                .Select(p => p.categoria)
+                .ToList();
+
+            // Obtener la categoría que predomine en el carrito
+            var categoriaPredominante = categoriasEnCarrito
+                .GroupBy(c => c)
+                .OrderByDescending(g => g.Count())
+                .Select(g => g.Key)
+                .FirstOrDefault();
+
+            if (categoriaPredominante == null)
+            {
+                return NotFound("No se encontró ninguna categoría predominante en el carrito");
+            }
+
+            // Obtener un producto de la categoría predominante que no está en el carrito
+            var productoRecomendado = await dbContext.Productos
+                .FirstOrDefaultAsync(p => p.categoria == categoriaPredominante && !productosEnCarrito.Contains(p.id_producto));
+
+            if (productoRecomendado == null)
+            {
+                return NotFound("No se encontró ningún producto recomendado");
+            }
+
+            return Ok(productoRecomendado);
+        }
+
+
     }
 }
 
