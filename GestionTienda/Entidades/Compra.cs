@@ -12,7 +12,7 @@ namespace GestionTienda.Entidades
         public int costo { get; set; }
         public int met_pago { get; set; }
         public String Direccion_env { get; set; }
-        public List<Carrito> ca{ get; set; }
+        public List<Carrito> ca { get; set; }
 
 
     }

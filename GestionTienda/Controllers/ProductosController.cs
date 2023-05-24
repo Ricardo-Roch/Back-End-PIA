@@ -72,35 +72,35 @@ namespace GestionTienda.Controllers
 
 		}*/
         [HttpPost]
-        public async Task<IActionResult> CrearProducto([FromForm]GetProducto productoDTO)
+        public async Task<IActionResult> CrearProducto([FromForm] GetProducto productoDTO)
         {
-            //Automapper.Configure();
-           // var productos1 = Mapper.Map<Productos>(productoDTO);
-            string fotoUrl = string.Empty; // Valor predeterminado para fotoUrl
+            string fotoUrl = string.Empty;
 
             if (productoDTO.Imagen != null)
             {
-                // Procesar y guardar la imagen
                 fotoUrl = await GuardarFoto(productoDTO.Imagen);
             }
 
-            // Asignar la URL de la imagen a la propiedad Foto
             var producto = new Productos
             {
+
                 id_producto = productoDTO.id_producto,
                 disponibilidad = productoDTO.disponibilidad,
                 categoria = productoDTO.categoria,
                 Nombre_producto = productoDTO.Nombre_producto,
                 Imagen = fotoUrl,
-               // carritos = productoDTO.carritos
-            };
+                Id_carrito = productoDTO.Id_carrito // Asignar el Id_carrito al producto
 
-            // Guardar la entidad en la base de datos
+        };
+
+            // Guardar el producto en la base de datos
             dbContext.Productos.Add(producto);
             await dbContext.SaveChangesAsync();
-            //await dbContext.Productos.AddAsync(productos1);
+
             return Ok();
         }
+
+
 
         private async Task<string> GuardarFoto(IFormFile foto)
         {
@@ -109,7 +109,7 @@ namespace GestionTienda.Controllers
            // await foto.CopyToAsync(stream);
 
             //var fileBytes = stream.ToArray();
-            string rutaArchivo = Path.Combine("C://Users//monte//OneDrive//Documentos//Back-end//Back-End-PIA//GestionTienda//Imagenes//", nombreArchivo);
+            string rutaArchivo = Path.Combine("/Users/ricardo/Desktop/Facu/Semestre 6/Back-End/PIA/Tienda/GestionTienda/Imagenes", nombreArchivo);
             // Aquí debes implementar la lógica para guardar el archivo en tu sistema de almacenamiento (por ejemplo, sistema de archivos, almacenamiento en la nube, etc.)
             // Retorna la URL de la imagen guardada
 

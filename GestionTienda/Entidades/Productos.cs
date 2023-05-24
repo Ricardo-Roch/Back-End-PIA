@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GestionTienda.Entidades
 {
@@ -12,7 +13,6 @@ namespace GestionTienda.Entidades
         public string categoria { get; set; }
         public string Nombre_producto { get; set; }
         public string Imagen { get; set; }
-
     }
 }
 

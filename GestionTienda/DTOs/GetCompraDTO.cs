@@ -7,7 +7,7 @@ namespace GestionTienda.DTOs
 	public class GetCompraDTO
 	{
         [Key]
-        public int id_compra { get; set; }
+       // public int id_compra { get; set; }
         public int id_usuario { get; set; }
         //public int Usuarioid_usuario { get; set; }
         public int costo { get; set; }

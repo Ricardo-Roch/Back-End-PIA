@@ -19,15 +19,23 @@ namespace GestionTienda.Controllers
 			//this.configuration = configuration;
 		}
 
-        [HttpGet]
+       /* [HttpGet]
         public async Task<List<carritoDTO>> Get()
         {
             Automapper.Configure();
             var carr = await dbContext.Carrito.ToListAsync();
 
             return Mapper.Map<List<carritoDTO>>(carr);
-        }
+        }*/
 
+        [HttpGet]
+        public async Task<List<carritoDTO>> Get()
+        {
+            Automapper.Configure();
+            var carritos = await dbContext.Carrito.Include(c => c.productos).ToListAsync();
+
+            return Mapper.Map<List<carritoDTO>>(carritos);
+        }
 
 
 
