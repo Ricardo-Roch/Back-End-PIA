@@ -3,6 +3,7 @@ using AutoMapper;
 using GestionTienda.DTOs;
 using GestionTienda.Entidades;
 using GestionTienda.Mapping;
+using GestionTienda.Migrations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,11 +27,49 @@ namespace GestionTienda.Controllers
         public async Task<List<productoDTO>> Get()
         {
             Automapper.Configure();
+            string fotoUrl = string.Empty;
             var producto = await dbContext.Productos.ToListAsync();
-            return Mapper.Map<List<productoDTO>>(producto);
+            return Mapper.Map<List<productoDTO>>(producto); ;
+          
+        }/*
+        [HttpGet("Imagen/{nombreImagen}")]
+        public IActionResult ObtenerImagen(string nombreImagen, IFormFile foto)
+        {
+             nombreImagen = Guid.NewGuid().ToString() + Path.GetExtension(foto.FileName);
+            var rutaImagen = Path.Combine("C://Users//monte//OneDrive//Documentos//Back-end//Back-End-PIA//GestionTienda//Imagenes//", nombreImagen + ".jpg");
+
+            if (!System.IO.File.Exists(rutaImagen))
+            {
+                return NotFound();
+            }
+
+            var imagenBytes = System.IO.File.ReadAllBytes(rutaImagen);
+            return File(imagenBytes, "image/jpeg");
+        }*/
+        [HttpGet("Imagen/{idProducto}")]
+        public IActionResult ObtenerImagen(int idProducto)
+        {
+            // Obtener el producto por su ID
+            var producto = dbContext.Productos.FirstOrDefault(p => p.id_producto == idProducto);
+
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            var nombreImagen = producto.Imagen;
+            var rutaImagen = Path.Combine("C://Users//monte//OneDrive//Documentos//Back-end//Back-End-PIA//GestionTienda//Imagenes//", nombreImagen);
+
+            if (!System.IO.File.Exists(rutaImagen))
+            {
+                return NotFound();
+            }
+
+            var imagenBytes = System.IO.File.ReadAllBytes(rutaImagen);
+            return File(imagenBytes, "image/jpeg");
         }
 
-        
+
 
 
         [HttpGet("productos/{categoria}")]
@@ -105,7 +144,8 @@ namespace GestionTienda.Controllers
         private async Task<string> GuardarFoto(IFormFile foto)
         {
             //using var stream = new MemoryStream();
-            string nombreArchivo = Guid.NewGuid().ToString() + Path.GetExtension(foto.FileName);
+            //string nombreArchivo = Guid.NewGuid().ToString() + Path.GetExtension(foto.FileName);
+            string nombreArchivo = foto.FileName;
            // await foto.CopyToAsync(stream);
 
             //var fileBytes = stream.ToArray();
@@ -117,7 +157,8 @@ namespace GestionTienda.Controllers
             {
                 await foto.CopyToAsync(stream);
             }
-            string urlImagen = "https://localhost:7236/swagger/index.html" + nombreArchivo;
+          //  string urlImagen = "https://localhost:7236/swagger/index.html" + nombreArchivo;
+            string urlImagen = nombreArchivo;
             return urlImagen;
         }
 
