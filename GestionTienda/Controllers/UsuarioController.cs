@@ -72,7 +72,7 @@ namespace GestionTienda.Controllers
         }
    
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> put(Usuario usuario, int id)
+        public async Task<ActionResult> put([FromForm] Usuario usuario, int id)
         {
             if (usuario.id_usuario != id)
             {

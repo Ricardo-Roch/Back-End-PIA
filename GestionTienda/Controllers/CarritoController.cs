@@ -51,7 +51,7 @@ namespace GestionTienda.Controllers
      
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> put(Carrito carrito, int id)
+        public async Task<ActionResult> put([FromForm] Carrito carrito, int id)
         {
             if (carrito.Id_carrito != id)
             {

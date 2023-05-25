@@ -13,7 +13,6 @@ namespace GestionTienda.Controllers
 {
     [ApiController]
     [Route("/Productos")]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
     public class ProductosController : ControllerBase
     {
         private readonly AplicationDbContext dbContext;
@@ -30,7 +29,7 @@ namespace GestionTienda.Controllers
             string fotoUrl = string.Empty;
             var producto = await dbContext.Productos.ToListAsync();
             return Mapper.Map<List<productoDTO>>(producto); ;
-          
+
         }/*
         [HttpGet("Imagen/{nombreImagen}")]
         public IActionResult ObtenerImagen(string nombreImagen, IFormFile foto)
@@ -58,7 +57,7 @@ namespace GestionTienda.Controllers
             }
 
             var nombreImagen = producto.Imagen;
-            var rutaImagen = Path.Combine("C://Users//monte//OneDrive//Documentos//Back-end//Back-End-PIA//GestionTienda//Imagenes//", nombreImagen);
+            var rutaImagen = Path.Combine("/Users/ricardo/Desktop/Facu/Semestre 6/Back-End/PIA/Tienda/GestionTienda/Imagenes", nombreImagen);
 
             if (!System.IO.File.Exists(rutaImagen))
             {
@@ -86,6 +85,7 @@ namespace GestionTienda.Controllers
         [HttpGet("productos/nombre/{nombre}")]
         public IActionResult GetProductoPorNombre(string nombre)
         {
+
             // Aquí se debe realizar la lógica para buscar el producto por su nombre
             // Puedes utilizar una base de datos o cualquier otra fuente de datos
 
@@ -110,6 +110,7 @@ namespace GestionTienda.Controllers
             return Ok();
 
 		}*/
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
         [HttpPost]
         public async Task<IActionResult> CrearProducto([FromForm] GetProducto productoDTO)
         {
@@ -118,6 +119,12 @@ namespace GestionTienda.Controllers
             if (productoDTO.Imagen != null)
             {
                 fotoUrl = await GuardarFoto(productoDTO.Imagen);
+            }
+            var carritoExistente = await dbContext.Carrito.FindAsync(productoDTO.Id_carrito);
+
+            if (carritoExistente == null)
+            {
+                return NotFound("No se encontró el carrito");
             }
 
             var producto = new Productos
@@ -130,7 +137,7 @@ namespace GestionTienda.Controllers
                 Imagen = fotoUrl,
                 Id_carrito = productoDTO.Id_carrito // Asignar el Id_carrito al producto
 
-        };
+            };
 
             // Guardar el producto en la base de datos
             dbContext.Productos.Add(producto);
@@ -146,10 +153,10 @@ namespace GestionTienda.Controllers
             //using var stream = new MemoryStream();
             //string nombreArchivo = Guid.NewGuid().ToString() + Path.GetExtension(foto.FileName);
             string nombreArchivo = foto.FileName;
-           // await foto.CopyToAsync(stream);
+            // await foto.CopyToAsync(stream);
 
             //var fileBytes = stream.ToArray();
-            string rutaArchivo = Path.Combine("C://Users//monte//OneDrive//Documentos//Back-end//Back-End-PIA//GestionTienda//Imagenes//", nombreArchivo);
+            string rutaArchivo = Path.Combine("/Users/ricardo/Desktop/Facu/Semestre 6/Back-End/PIA/Tienda/GestionTienda/Imagenes", nombreArchivo);
             // Aquí debes implementar la lógica para guardar el archivo en tu sistema de almacenamiento (por ejemplo, sistema de archivos, almacenamiento en la nube, etc.)
             // Retorna la URL de la imagen guardada
 
@@ -157,7 +164,7 @@ namespace GestionTienda.Controllers
             {
                 await foto.CopyToAsync(stream);
             }
-          //  string urlImagen = "https://localhost:7236/swagger/index.html" + nombreArchivo;
+            //  string urlImagen = "https://localhost:7236/swagger/index.html" + nombreArchivo;
             string urlImagen = nombreArchivo;
             return urlImagen;
         }
@@ -175,6 +182,7 @@ namespace GestionTienda.Controllers
             await dbContext.SaveChangesAsync();
             return Ok();
         }*/
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> ActualizarProducto(int id, [FromForm] GetProducto productoDTO)
         {
@@ -183,6 +191,12 @@ namespace GestionTienda.Controllers
             if (productoExistente == null)
             {
                 return NotFound();
+            }
+            var carritoExistente = await dbContext.Carrito.FindAsync(productoDTO.Id_carrito);
+
+            if (carritoExistente == null)
+            {
+                return NotFound("No se encontró el carrito");
             }
 
             // Procesar y guardar la imagen si se proporciona una nueva imagen
@@ -206,7 +220,7 @@ namespace GestionTienda.Controllers
 
             return Ok();
         }
-
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
@@ -344,4 +358,3 @@ namespace GestionTienda.Controllers
 
     }
 }
-

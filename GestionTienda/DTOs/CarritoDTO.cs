@@ -15,7 +15,7 @@ namespace GestionTienda.DTOs
         public int id_usuario { get; set; }
         [RegularExpression(@"^\d+$", ErrorMessage = "El campo debe ser un número entero.")]
         public int costo_total { get; set; }
-        //public int id_compra { get; set; }
+        public int id_compra { get; set; }
         public List<Productos> productos { get; set; }
 
     }

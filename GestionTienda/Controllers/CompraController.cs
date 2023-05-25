@@ -21,13 +21,13 @@ namespace GestionTienda.Controllers
             _emailService = emailService;
             // this.configuration = configuration;
         }
-       
 
+   
         [HttpGet]
         public async Task<List<compraDTO>> Get()
         {
             Automapper.Configure();
-            var compras = await dbContext.Compra.ToListAsync();
+            var compras = await dbContext.Compra.Include(c => c.ca).ToListAsync();
 
             return Mapper.Map<List<compraDTO>>(compras);
         }
@@ -101,7 +101,7 @@ namespace GestionTienda.Controllers
        
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> put(Compra compra, int id)
+        public async Task<ActionResult> put([FromForm]Compra compra, int id)
         {
             if (compra.id_compra != id)
             {
@@ -114,7 +114,7 @@ namespace GestionTienda.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete([FromForm] int id)
         {
             var exist = await dbContext.Compra.AnyAsync(x => x.id_compra == id);
             if (!exist)
