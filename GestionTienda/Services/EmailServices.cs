@@ -18,7 +18,7 @@ namespace GestionTienda.Services
             SmtpClient client = new SmtpClient("smtp-mail.outlook.com", 587); // Reemplaza con la información de tu servidor SMTP
             client.UseDefaultCredentials = false;
             client.EnableSsl = true;
-            client.Credentials = new NetworkCredential("monterrey-luis@hotmail.com", "rayado");
+            client.Credentials = new NetworkCredential("", "");
 
 
             MailMessage message = new MailMessage();
