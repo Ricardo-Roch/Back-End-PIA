@@ -24,14 +24,21 @@ namespace GestionTienda.Controllers
 
 
 		}
-		[HttpPost]
+        /*[HttpPost]
 		public async Task<ActionResult> Post(Carrito carrito)
 		{
 			dbContext.Add(carrito);
 			await dbContext.SaveChangesAsync();
 			return Ok();
-		}
+		}*/
 
+        [HttpPost]
+        public async Task<ActionResult> Post(Carrito carrito)
+        {
+            dbContext.Add(carrito);
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
         [HttpPut("{id:int}")]
         public async Task<ActionResult> put(Carrito carrito, int id)
         {
