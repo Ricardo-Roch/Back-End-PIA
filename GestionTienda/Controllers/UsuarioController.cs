@@ -2,12 +2,15 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using AutoMapper;
 using GestionTienda.DTOs;
 using GestionTienda.Entidades;
+using GestionTienda.Mapping;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+
 
 namespace GestionTienda.Controllers
 {
@@ -29,21 +32,28 @@ namespace GestionTienda.Controllers
             this.userManager = userManager;
             this.signInManager = signInManager;
         }
-
-        [HttpGet]
-        public async Task<ActionResult<List<Usuario>>> Get()
+        //metodo get, jalando al 100 dtos
+        
+        [HttpGet("Con dtos")]
+        public async Task<List<UsuarioDTO>> Get()
         {
-            return await dbContext.Usuario.Include(x=> x.carritos).ToListAsync();
+            Automapper.Configure();
+            var usuarios = await dbContext.Usuario.ToListAsync();
+            return Mapper.Map<List<UsuarioDTO>>(usuarios);
         }
-		
-		[HttpPost]
-		public async Task<ActionResult> Post(Usuario usuario)
-		{
-		    dbContext.Add(usuario);
-		    await dbContext.SaveChangesAsync();
-		    return Ok();
-		}
 
+       
+
+        [HttpPost]
+        public async Task<ActionResult> Post(UsuarioDTO usuarioDTO)
+        {
+            Automapper.Configure();
+            var us = Mapper.Map<Usuario>(usuarioDTO);
+            await dbContext.Usuario.AddAsync(us);
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
+   
         [HttpPut("{id:int}")]
         public async Task<ActionResult> put(Usuario usuario, int id)
         {

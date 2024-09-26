@@ -1,16 +1,17 @@
 ﻿using System;
+using GestionTienda.Entidades;
 using System.ComponentModel.DataAnnotations;
 
-namespace GestionTienda.Entidades
+namespace GestionTienda.DTOs
 {
-    public class Productos
-    {
-        [Key]
+	public class GetProducto
+	{
+        
         public int id_producto { get; set; }
         public bool disponibilidad { get; set; }
         public string categoria { get; set; }
         public string Nombre_producto { get; set; }
-        public string Imagen { get; set; }
+        public IFormFile Imagen { get; set; }
 
         public List<Carrito> carritos { get; set; }
     }
