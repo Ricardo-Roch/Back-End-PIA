@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GestionTienda.Entidades;
-
+using AutoMapper;
+using GestionTienda.DTOs;
+using GestionTienda.Mapping;
 
 namespace GestionTienda.Controllers
 {
-	[ApiController]
+    [ApiController]
 	[Route("/Carrito")]
 	public class CarritoController: ControllerBase
 	{
@@ -17,20 +19,36 @@ namespace GestionTienda.Controllers
 			//this.configuration = configuration;
 		}
 
-		[HttpGet]
-		public async Task<ActionResult<List<Carrito>>> GetAll()
-		{
-			return await dbContext.Carrito.ToListAsync();
+       /* [HttpGet]
+        public async Task<List<carritoDTO>> Get()
+        {
+            Automapper.Configure();
+            var carr = await dbContext.Carrito.ToListAsync();
+
+            return Mapper.Map<List<carritoDTO>>(carr);
+        }*/
+
+        [HttpGet]
+        public async Task<List<carritoDTO>> Get()
+        {
+            Automapper.Configure();
+            var carritos = await dbContext.Carrito.Include(c => c.productos).ToListAsync();
+
+            return Mapper.Map<List<carritoDTO>>(carritos);
+        }
 
 
-		}
-		[HttpPost]
-		public async Task<ActionResult> Post(Carrito carrito)
-		{
-			dbContext.Add(carrito);
-			await dbContext.SaveChangesAsync();
-			return Ok();
-		}
+
+        [HttpPost("Carrito")]
+        public async Task<ActionResult> Post([FromForm] carritoDTO CarritoDTO)
+        {
+            Automapper.Configure();
+            var carr = Mapper.Map<Carrito>(CarritoDTO);
+            await dbContext.Carrito.AddAsync(carr);
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
+     
 
         [HttpPut("{id:int}")]
         public async Task<ActionResult> put(Carrito carrito, int id)
