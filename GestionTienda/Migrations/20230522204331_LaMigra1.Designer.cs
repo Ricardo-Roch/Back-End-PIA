@@ -4,6 +4,7 @@ using GestionTienda;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestionTienda.Migrations
 {
     [DbContext(typeof(AplicationDbContext))]
-    partial class AplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230522204331_LaMigra1")]
+    partial class LaMigra1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,51 @@ namespace GestionTienda.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("CarritoCompra", b =>
+                {
+                    b.Property<int>("carritosId_carrito")
+                        .HasColumnType("int");
+
+                    b.Property<int>("comprasid_compra")
+                        .HasColumnType("int");
+
+                    b.HasKey("carritosId_carrito", "comprasid_compra");
+
+                    b.HasIndex("comprasid_compra");
+
+                    b.ToTable("CarritoCompra");
+                });
+
+            modelBuilder.Entity("CarritoProductos", b =>
+                {
+                    b.Property<int>("carritosId_carrito")
+                        .HasColumnType("int");
+
+                    b.Property<int>("productosid_producto")
+                        .HasColumnType("int");
+
+                    b.HasKey("carritosId_carrito", "productosid_producto");
+
+                    b.HasIndex("productosid_producto");
+
+                    b.ToTable("CarritoProductos");
+                });
+
+            modelBuilder.Entity("CarritoUsuario", b =>
+                {
+                    b.Property<int>("carritosId_carrito")
+                        .HasColumnType("int");
+
+                    b.Property<int>("usuariosid_usuario")
+                        .HasColumnType("int");
+
+                    b.HasKey("carritosId_carrito", "usuariosid_usuario");
+
+                    b.HasIndex("usuariosid_usuario");
+
+                    b.ToTable("CarritoUsuario");
+                });
 
             modelBuilder.Entity("GestionTienda.Entidades.Carrito", b =>
                 {
@@ -30,26 +78,10 @@ namespace GestionTienda.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_carrito"));
 
-                    b.Property<int?>("Compraid_compra")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Usuarioid_usuario")
-                        .HasColumnType("int");
-
                     b.Property<int>("costo_total")
                         .HasColumnType("int");
 
-                    b.Property<int>("id_compra")
-                        .HasColumnType("int");
-
-                    b.Property<int>("id_usuario")
-                        .HasColumnType("int");
-
                     b.HasKey("Id_carrito");
-
-                    b.HasIndex("Compraid_compra");
-
-                    b.HasIndex("Usuarioid_usuario");
 
                     b.ToTable("Carrito");
                 });
@@ -65,21 +97,13 @@ namespace GestionTienda.Migrations
                     b.Property<string>("Direccion_env")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Usuarioid_usuario")
-                        .HasColumnType("int");
-
                     b.Property<int>("costo")
-                        .HasColumnType("int");
-
-                    b.Property<int>("id_usuario")
                         .HasColumnType("int");
 
                     b.Property<int>("met_pago")
                         .HasColumnType("int");
 
                     b.HasKey("id_compra");
-
-                    b.HasIndex("Usuarioid_usuario");
 
                     b.ToTable("Compra");
                 });
@@ -115,15 +139,6 @@ namespace GestionTienda.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id_producto"));
 
-                    b.Property<int?>("CarritoId_carrito")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Id_carrito")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Imagen")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Nombre_producto")
                         .HasColumnType("nvarchar(max)");
 
@@ -134,8 +149,6 @@ namespace GestionTienda.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("id_producto");
-
-                    b.HasIndex("CarritoId_carrito");
 
                     b.ToTable("Productos");
                 });
@@ -148,6 +161,9 @@ namespace GestionTienda.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id_usuario"));
 
+                    b.Property<int?>("Compraid_compra")
+                        .HasColumnType("int");
+
                     b.Property<string>("contra")
                         .HasColumnType("nvarchar(max)");
 
@@ -158,6 +174,8 @@ namespace GestionTienda.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id_usuario");
+
+                    b.HasIndex("Compraid_compra");
 
                     b.ToTable("Usuario");
                 });
@@ -360,22 +378,49 @@ namespace GestionTienda.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("GestionTienda.Entidades.Carrito", b =>
+            modelBuilder.Entity("CarritoCompra", b =>
                 {
-                    b.HasOne("GestionTienda.Entidades.Compra", null)
-                        .WithMany("ca")
-                        .HasForeignKey("Compraid_compra");
+                    b.HasOne("GestionTienda.Entidades.Carrito", null)
+                        .WithMany()
+                        .HasForeignKey("carritosId_carrito")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("GestionTienda.Entidades.Usuario", null)
-                        .WithMany("carritos")
-                        .HasForeignKey("Usuarioid_usuario");
+                    b.HasOne("GestionTienda.Entidades.Compra", null)
+                        .WithMany()
+                        .HasForeignKey("comprasid_compra")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("GestionTienda.Entidades.Compra", b =>
+            modelBuilder.Entity("CarritoProductos", b =>
                 {
+                    b.HasOne("GestionTienda.Entidades.Carrito", null)
+                        .WithMany()
+                        .HasForeignKey("carritosId_carrito")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GestionTienda.Entidades.Productos", null)
+                        .WithMany()
+                        .HasForeignKey("productosid_producto")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CarritoUsuario", b =>
+                {
+                    b.HasOne("GestionTienda.Entidades.Carrito", null)
+                        .WithMany()
+                        .HasForeignKey("carritosId_carrito")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("GestionTienda.Entidades.Usuario", null)
-                        .WithMany("compras")
-                        .HasForeignKey("Usuarioid_usuario");
+                        .WithMany()
+                        .HasForeignKey("usuariosid_usuario")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("GestionTienda.Entidades.CompraCarrito", b =>
@@ -393,11 +438,11 @@ namespace GestionTienda.Migrations
                     b.Navigation("compra");
                 });
 
-            modelBuilder.Entity("GestionTienda.Entidades.Productos", b =>
+            modelBuilder.Entity("GestionTienda.Entidades.Usuario", b =>
                 {
-                    b.HasOne("GestionTienda.Entidades.Carrito", null)
-                        .WithMany("productos")
-                        .HasForeignKey("CarritoId_carrito");
+                    b.HasOne("GestionTienda.Entidades.Compra", null)
+                        .WithMany("Usuarios")
+                        .HasForeignKey("Compraid_compra");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -451,21 +496,9 @@ namespace GestionTienda.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("GestionTienda.Entidades.Carrito", b =>
-                {
-                    b.Navigation("productos");
-                });
-
             modelBuilder.Entity("GestionTienda.Entidades.Compra", b =>
                 {
-                    b.Navigation("ca");
-                });
-
-            modelBuilder.Entity("GestionTienda.Entidades.Usuario", b =>
-                {
-                    b.Navigation("carritos");
-
-                    b.Navigation("compras");
+                    b.Navigation("Usuarios");
                 });
 #pragma warning restore 612, 618
         }
